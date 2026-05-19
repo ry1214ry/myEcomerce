@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -11,7 +12,11 @@ class Brand extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'description', 'logo', 'is_active',
+        'name',
+        'slug',
+        'description',
+        'logo',
+        'is_active',
     ];
 
     protected $casts = [
@@ -35,8 +40,9 @@ class Brand extends Model
 
     public function getLogoUrlAttribute(): string
     {
-        return $this->logo
-            ? asset('storage/' . $this->logo)
-            : asset('images/brand-placeholder.jpg');
+        if (!$this->logo) {
+            return 'https://via.placeholder.com/200x80/1a1a2e/c9a96e?text=' . urlencode($this->name);
+        }
+        return PublicMedia::url($this->logo);
     }
 }

@@ -34,5 +34,23 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'telegram' => [
+        'token'   => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id' => env('TELEGRAM_CHAT_ID'),
+    ],
+
+    //     'bakong' => [
+    //     'token'         => env('BAKONG_TOKEN', ''),
+    //     'account_id'    => env('BAKONG_ACCOUNT_ID', 'vannak_dim@cadi'),
+    //     'merchant_name' => env('BAKONG_MERCHANT_NAME', 'LuxeShop'),
+    //     'merchant_city' => env('BAKONG_MERCHANT_CITY', 'Phnom Penh'),
+    // ],
+
+    'bakong' => [
+        'account_id' => env('BAKONG_ACCOUNT_ID', 'youraccount@bank'),
+        'merchant_name' => env('BAKONG_MERCHANT_NAME', 'LuxeShop'),
+        'merchant_city' => env('BAKONG_MERCHANT_CITY', 'Phnom Penh'),
+        'currency' => env('BAKONG_CURRENCY', 'USD'),
+    ],
 
 ];

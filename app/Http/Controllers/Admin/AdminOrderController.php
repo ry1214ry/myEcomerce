@@ -4,10 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 
 class AdminOrderController extends Controller
 {
+    protected TelegramService $telegram;
+
+    public function __construct(TelegramService $telegram)
+    {
+        $this->telegram = $telegram;
+    }
+
     public function index(Request $request)
     {
         $query = Order::with('user');
@@ -41,10 +49,17 @@ class AdminOrderController extends Controller
             'payment_status' => 'nullable|in:pending,paid,failed,refunded',
         ]);
 
+        $oldStatus = $order->status;
+
         $order->update([
             'status'         => $request->status,
             'payment_status' => $request->payment_status ?? $order->payment_status,
         ]);
+
+        // ✅ Send Telegram alert when status changes
+        if ($oldStatus !== $request->status) {
+            $this->telegram->sendStatusUpdateNotification($order, $oldStatus);
+        }
 
         return back()->with('success', 'Order status updated!');
     }

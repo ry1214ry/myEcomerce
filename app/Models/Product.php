@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -11,11 +12,24 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category_id', 'brand_id', 'name', 'slug',
-        'short_description', 'description', 'price', 'sale_price',
-        'stock_quantity', 'sku', 'main_image', 'is_active',
-        'is_featured', 'is_new_arrival', 'is_best_seller',
-        'views', 'rating', 'reviews_count',
+        'category_id',
+        'brand_id',
+        'name',
+        'slug',
+        'short_description',
+        'description',
+        'price',
+        'sale_price',
+        'stock_quantity',
+        'sku',
+        'main_image',
+        'is_active',
+        'is_featured',
+        'is_new_arrival',
+        'is_best_seller',
+        'views',
+        'rating',
+        'reviews_count',
     ];
 
     protected $casts = [
@@ -81,12 +95,12 @@ class Product extends Model
     }
 
     public function getMainImageUrlAttribute(): string
-    {
-        return $this->main_image
-            ? asset('storage/' . $this->main_image)
-            : asset('images/product-placeholder.jpg');
+{
+    if (!$this->main_image) {
+        return 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop';
     }
-
+    return PublicMedia::url($this->main_image);
+}
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

@@ -54,6 +54,10 @@
             </tbody>
         </table>
     </div>
-    <div class="p-4 border-top">{{ $orders->links() }}</div>
+    @if($orders->hasPages())
+    <div class="p-4 border-top d-flex justify-content-end">
+        {{ $orders->onEachSide(1)->links('vendor.pagination.admin') }}
+    </div>
+    @endif
 </div>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -11,8 +12,12 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'description', 'image',
-        'is_active', 'sort_order',
+        'name',
+        'slug',
+        'description',
+        'image',
+        'is_active',
+        'sort_order',
     ];
 
     protected $casts = [
@@ -36,8 +41,9 @@ class Category extends Model
 
     public function getImageUrlAttribute(): string
     {
-        return $this->image
-            ? asset('storage/' . $this->image)
-            : asset('images/placeholder.jpg');
+        if (!$this->image) {
+            return 'https://images.unsplash.com/photo-1504280390367-36dc7ab2705b?w=400&h=300&fit=crop';
+        }
+        return PublicMedia::url($this->image);
     }
 }

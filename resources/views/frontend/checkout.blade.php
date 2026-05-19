@@ -80,33 +80,132 @@
                 </div>
 
                 {{-- Payment --}}
-                <div class="bg-white rounded-xl border p-4" style="border-color:var(--border)!important;">
-                    <h5 class="mb-4" style="font-size:1.3rem;">
-                        <i class="bi bi-credit-card me-2 text-accent"></i>Payment Method
-                    </h5>
-                    <div class="row g-3">
-                        @foreach([
-                            ['cod','bi-cash-coin','Cash on Delivery','Pay when your order arrives'],
-                            ['card','bi-credit-card','Credit / Debit Card','Visa, Mastercard, Amex'],
-                            ['paypal','bi-paypal','PayPal','Fast, secure online payment'],
-                        ] as $pm)
-                        <div class="col-md-4">
-                            <label class="d-block cursor-pointer">
-                                <input type="radio" name="payment_method" value="{{ $pm[0] }}"
-                                       {{ old('payment_method', 'cod') == $pm[0] ? 'checked' : '' }}
-                                       class="d-none payment-radio" id="pm-{{ $pm[0] }}">
-                                <div class="border rounded-xl p-3 text-center h-100 payment-option"
-                                     style="border-color:var(--border)!important;cursor:pointer;transition:all .2s;"
-                                     onclick="selectPayment('{{ $pm[0] }}')">
-                                    <i class="bi {{ $pm[1] }} fs-2 text-accent d-block mb-2"></i>
-                                    <div class="fw-600" style="font-size:.875rem;">{{ $pm[2] }}</div>
-                                    <div class="text-muted" style="font-size:.75rem;">{{ $pm[3] }}</div>
-                                </div>
-                            </label>
-                        </div>
-                        @endforeach
+                {{-- ── Payment Method ──────────────────────────────────────── --}}
+<div class="checkout-section">
+    <h6 class="section-label mb-3">
+        <i class="bi bi-credit-card me-2"></i>
+        Payment Method
+    </h6>
+
+    <div class="payment-options">
+
+        {{-- COD --}}
+        <label class="payment-option-card">
+            <input type="radio"
+                   name="payment_method"
+                   value="cod"
+                   checked>
+            <div class="payment-card-body">
+                <div class="payment-icon">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <div>
+                    <div class="payment-name">Cash on Delivery</div>
+                    <div class="payment-desc">Pay when you receive</div>
+                </div>
+            </div>
+        </label>
+
+        {{-- Card --}}
+        <label class="payment-option-card">
+            <input type="radio"
+                   name="payment_method"
+                   value="card">
+            <div class="payment-card-body">
+                <div class="payment-icon">
+                    <i class="bi bi-credit-card-2-front"></i>
+                </div>
+                <div>
+                    <div class="payment-name">Credit / Debit Card</div>
+                    <div class="payment-desc">Visa, Mastercard</div>
+                </div>
+            </div>
+        </label>
+
+        {{-- ✅ KHQR --}}
+        <label class="payment-option-card khqr-option">
+            <input type="radio"
+                   name="payment_method"
+                   value="khqr">
+            <div class="payment-card-body">
+                <div class="payment-icon khqr-icon">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <div>
+                    <div class="payment-name">
+                        Bakong KHQR
+                        <span class="badge-khqr">Recommended</span>
+                    </div>
+                    <div class="payment-desc">
+                        Scan QR with Bakong App
                     </div>
                 </div>
+            </div>
+        </label>
+
+    </div>
+</div>
+
+<style>
+    .payment-options { display: flex; flex-direction: column; gap: .75rem; }
+
+    .payment-option-card {
+        cursor: pointer;
+        display: block;
+    }
+    .payment-option-card input[type="radio"] { display: none; }
+    .payment-card-body {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+        transition: all .2s;
+    }
+    .payment-option-card input:checked + .payment-card-body {
+        border-color: var(--accent);
+        background: rgba(201,169,110,.05);
+        box-shadow: 0 0 0 3px rgba(201,169,110,.1);
+    }
+    .payment-icon {
+        width: 42px; height: 42px;
+        border-radius: 10px;
+        background: var(--bg-light);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        color: var(--primary);
+        flex-shrink: 0;
+    }
+    .khqr-icon {
+        background: linear-gradient(135deg, #1a1a2e, #2d2d54);
+        color: #c9a96e;
+    }
+    .payment-name {
+        font-size: .9rem;
+        font-weight: 600;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+    .payment-desc {
+        font-size: .78rem;
+        color: var(--text-muted);
+    }
+    .badge-khqr {
+        background: rgba(201,169,110,.15);
+        border: 1px solid rgba(201,169,110,.3);
+        color: #a07840;
+        font-size: .65rem;
+        font-weight: 700;
+        padding: .15rem .5rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+</style>
             </div>
 
             {{-- Order Summary --}}

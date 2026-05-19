@@ -10,7 +10,14 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
+        // Not logged in → admin login
+        if (!auth()->check()) {
+            return redirect()->route('admin.login')
+                ->with('error', 'Please login to access the admin panel.');
+        }
+
+        // Logged in but not admin → 403
+        if (!auth()->user()->isAdmin()) {
             abort(403, 'Access denied. Admins only.');
         }
 

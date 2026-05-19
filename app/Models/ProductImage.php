@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,9 @@ class ProductImage extends Model
 
     public function getImageUrlAttribute(): string
     {
-        return asset('storage/' . $this->image);
+        return PublicMedia::url(
+            $this->image,
+            'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop'
+        );
     }
 }

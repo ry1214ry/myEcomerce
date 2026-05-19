@@ -48,6 +48,7 @@
         }
         h1,h2,h3,h4,h5 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
         a { text-decoration: none; color: inherit; transition: var(--transition); }
+        img { max-width: 100%; }
 
         /* ─── NAVBAR ─── */
         .navbar-main {
@@ -60,6 +61,20 @@
             z-index: 1040;
             box-shadow: var(--shadow-sm);
         }
+        .navbar-main.is-scrolled {
+            box-shadow: 0 16px 40px rgba(26,26,46,.12);
+            border-bottom-color: rgba(201,169,110,.22);
+        }
+        .navbar-main.is-menu-open {
+            box-shadow: 0 18px 42px rgba(26,26,46,.14);
+        }
+        .navbar-shell {
+            align-items: center;
+        }
+        .navbar-drawer {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
         .navbar-brand-text {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.8rem;
@@ -68,7 +83,34 @@
             letter-spacing: -0.02em;
         }
         .navbar-brand-text span { color: var(--accent); }
-        .navbar-main .nav-link {
+        .navbar-mobile-actions {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            margin-left: auto;
+        }
+        .navbar-toggler {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border) !important;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            background: var(--bg-light);
+            transition: var(--transition);
+        }
+        .navbar-toggler:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent) !important;
+        }
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 .2rem rgba(201,169,110,.16);
+        }
+        .navbar-main .nav-link,
+        #mainNav .nav-link {
             font-size: .875rem;
             font-weight: 500;
             color: var(--text-dark) !important;
@@ -77,7 +119,8 @@
             text-transform: uppercase;
             position: relative;
         }
-        .navbar-main .nav-link::after {
+        .navbar-main .nav-link::after,
+        #mainNav .nav-link::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -89,8 +132,11 @@
             transition: width .3s ease;
         }
         .navbar-main .nav-link:hover::after,
-        .navbar-main .nav-link.active::after { width: 60%; }
-        .navbar-main .nav-link:hover { color: var(--accent) !important; }
+        .navbar-main .nav-link.active::after,
+        #mainNav .nav-link:hover::after,
+        #mainNav .nav-link.active::after { width: 60%; }
+        .navbar-main .nav-link:hover,
+        #mainNav .nav-link:hover { color: var(--accent) !important; }
         .nav-icon-btn {
             display: inline-flex;
             align-items: center;
@@ -105,6 +151,65 @@
             position: relative;
         }
         .nav-icon-btn:hover { background: var(--accent); color: #fff; }
+        .navbar-search-form {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-search-group {
+            width: 240px;
+        }
+        .navbar-search-input {
+            border: 1.5px solid var(--border);
+            font-size: .875rem;
+            min-height: 44px;
+        }
+        .navbar-search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 .2rem rgba(201,169,110,.12);
+        }
+        .navbar-search-btn {
+            min-width: 48px;
+        }
+        .navbar-mobile-panel {
+            width: 100%;
+        }
+        #mainNav .offcanvas-header {
+            border-bottom: 1px solid var(--border);
+        }
+        .navbar-mobile-search,
+        .navbar-mobile-account {
+            display: none;
+        }
+        .navbar-mobile-account-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .navbar-mobile-account-label {
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: .35rem;
+        }
+        .navbar-mobile-auth-buttons,
+        .navbar-mobile-account-actions {
+            display: grid;
+            gap: .75rem;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .navbar-mobile-account-actions form {
+            grid-column: 1 / -1;
+            margin: 0;
+        }
+        .navbar-mobile-auth-buttons .btn,
+        .navbar-mobile-account-actions .btn,
+        .navbar-mobile-account-actions button {
+            width: 100%;
+        }
         .cart-badge {
             position: absolute;
             top: -4px;
@@ -350,6 +455,49 @@
         .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
+        /* ─── SHARED JS ENHANCEMENTS ─── */
+        .js-enhanced img.media-fade {
+            opacity: 0;
+            transition: opacity .35s ease;
+        }
+        .js-enhanced img.media-fade.is-loaded { opacity: 1; }
+        form.is-submitting button[type="submit"],
+        form.is-submitting input[type="submit"] {
+            opacity: .72;
+            cursor: wait;
+            pointer-events: none;
+        }
+        .back-to-top {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: #fff;
+            box-shadow: var(--shadow-md);
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: var(--transition);
+        }
+        .back-to-top:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .back-to-top.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
         /* ─── MISC ─── */
         .bg-light-main { background: var(--bg-light) !important; }
         .text-accent { color: var(--accent) !important; }
@@ -360,6 +508,88 @@
         @media (max-width: 768px) {
             .hero-slider .carousel-item { height: 55vh; min-height: 380px; }
             .section-title { font-size: 2rem; }
+            .back-to-top {
+                right: 16px;
+                bottom: 16px;
+                width: 44px;
+                height: 44px;
+            }
+        }
+        @media (max-width: 991.98px) {
+            .top-bar {
+                display: none;
+            }
+            .navbar-main {
+                padding: .8rem 0;
+            }
+            .navbar-brand-text {
+                font-size: 1.65rem;
+            }
+            #mainNav.offcanvas {
+                width: min(360px, 88vw);
+                border-right: 1px solid var(--border);
+                background: #fff;
+            }
+            #mainNav .offcanvas-header {
+                padding: 1rem 1.1rem .85rem;
+            }
+            #mainNav .offcanvas-body {
+                padding: 0;
+            }
+            .navbar-mobile-panel {
+                padding: 1rem 1.1rem 1.35rem;
+            }
+            .navbar-mobile-search,
+            .navbar-mobile-account {
+                display: block;
+            }
+            .navbar-search-form,
+            .navbar-search-group {
+                width: 100%;
+            }
+            .navbar-main .navbar-nav,
+            #mainNav .navbar-nav {
+                gap: 0;
+                width: 100%;
+            }
+            .navbar-main .nav-link,
+            #mainNav .nav-link {
+                padding: .95rem 0 !important;
+                border-bottom: 1px solid var(--border);
+                font-size: .92rem;
+                letter-spacing: .08em;
+            }
+            .navbar-main .nav-link::after,
+            #mainNav .nav-link::after {
+                display: none;
+            }
+            .navbar-main .dropdown-toggle,
+            #mainNav .dropdown-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .navbar-main .dropdown-menu,
+            #mainNav .dropdown-menu {
+                position: static !important;
+                inset: auto !important;
+                transform: none !important;
+                float: none;
+                border: 1px solid var(--border);
+                box-shadow: none;
+                border-radius: 14px;
+                background: var(--bg-light);
+                margin-top: .65rem;
+                padding: .35rem 0;
+            }
+            .navbar-main .dropdown-item,
+            #mainNav .dropdown-item {
+                padding: .75rem 1rem;
+                font-size: .9rem;
+            }
+            .navbar-mobile-actions {
+                margin-right: .65rem;
+            }
         }
     </style>
 
@@ -382,61 +612,97 @@
     </div>
 </div>
 
+@php
+    $cartCount = auth()->check()
+        ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity')
+        : \App\Models\Cart::where('session_id', session()->getId())->sum('quantity');
+    $navCategories = \App\Models\Category::where('is_active', true)->take(8)->get();
+@endphp
+
 {{-- Navbar --}}
 <nav class="navbar navbar-main navbar-expand-lg">
-    <div class="container">
-        <a href="{{ route('home') }}" class="navbar-brand navbar-brand-text me-4">
-            Luxe<span>Shop</span>
-        </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+    <div class="container navbar-shell">
+        <button class="navbar-toggler d-lg-none order-3"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#mainNav"
+                aria-controls="mainNav"
+                aria-label="Open navigation menu">
             <i class="bi bi-list fs-4"></i>
         </button>
-        <div class="collapse navbar-collapse" id="mainNav">
+
+        <a href="{{ route('home') }}" class="navbar-brand navbar-brand-text order-1 me-auto me-lg-4">
+            Luxe<span>Shop</span>
+        </a>
+
+        <div class="navbar-mobile-actions d-lg-none order-2">
+            <a href="{{ route('cart.index') }}" class="nav-icon-btn" aria-label="View cart">
+                <i class="bi bi-bag"></i>
+                @if($cartCount > 0)
+                    <span class="cart-badge">{{ $cartCount }}</span>
+                @endif
+            </a>
+        </div>
+
+        <div class="d-none d-lg-flex align-items-center flex-grow-1 order-lg-2">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
-                <li class="nav-item"><a href="{{ route('shop') }}" class="nav-link {{ request()->routeIs('shop*') ? 'active' : '' }}">Shop</a></li>
+                <li class="nav-item">
+                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('shop') }}" class="nav-link {{ request()->routeIs('shop*') ? 'active' : '' }}">Shop</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
                     <ul class="dropdown-menu border-0 shadow-luxury rounded-xl py-2">
-                        @php $navCategories = \App\Models\Category::where('is_active', true)->take(8)->get(); @endphp
                         @foreach($navCategories as $cat)
                             <li><a href="{{ route('shop.category', $cat->slug) }}" class="dropdown-item py-2">{{ $cat->name }}</a></li>
                         @endforeach
                     </ul>
                 </li>
-                <li class="nav-item"><a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">About</a></li>
-                <li class="nav-item"><a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a></li>
+                <li class="nav-item">
+                    <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+                </li>
             </ul>
 
-            {{-- Search --}}
-            <form action="{{ route('shop') }}" method="GET" class="d-flex me-3">
-                <div class="input-group" style="width:240px;">
-                    <input type="text" name="search" class="form-control rounded-start-pill border-end-0"
-                           placeholder="Search products..." value="{{ request('search') }}"
-                           style="border:1.5px solid var(--border); font-size:.875rem;">
-                    <button type="submit" class="btn btn-accent rounded-end-pill px-3" style="border-radius: 0 50px 50px 0 !important;">
+            <form action="{{ route('shop') }}" method="GET" class="navbar-search-form me-3">
+                <div class="input-group navbar-search-group">
+                    <input type="text"
+                           name="search"
+                           class="form-control navbar-search-input rounded-start-pill border-end-0"
+                           placeholder="Search products..."
+                           value="{{ request('search') }}">
+                    <button type="submit"
+                            class="btn btn-accent navbar-search-btn rounded-end-pill px-3"
+                            style="border-radius: 0 50px 50px 0 !important;">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
             </form>
 
-            {{-- Icons --}}
             <div class="d-flex align-items-center gap-2">
                 @auth
-                <a href="{{ route('wishlist.index') }}" class="nav-icon-btn"><i class="bi bi-heart"></i></a>
-                <a href="{{ route('profile.show') }}" class="nav-icon-btn"><i class="bi bi-person"></i></a>
+                    @if(!auth()->user()->isAdmin())
+                        <a href="{{ route('wishlist.index') }}" class="nav-icon-btn" aria-label="Wishlist">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <a href="{{ route('profile.show') }}" class="nav-icon-btn" aria-label="Profile">
+                            <i class="bi bi-person"></i>
+                        </a>
+                    @else
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-accent btn-sm">Admin</a>
+                    @endif
                 @endauth
-                <a href="{{ route('cart.index') }}" class="nav-icon-btn">
+                <a href="{{ route('cart.index') }}" class="nav-icon-btn" aria-label="View cart">
                     <i class="bi bi-bag"></i>
-                    @php $cartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : \App\Models\Cart::where('session_id', session()->getId())->sum('quantity'); @endphp
                     @if($cartCount > 0)
                         <span class="cart-badge">{{ $cartCount }}</span>
                     @endif
                 </a>
                 @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-accent btn-sm">Admin</a>
-                    @endif
                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill">Logout</button>
@@ -446,6 +712,90 @@
         </div>
     </div>
 </nav>
+
+<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mainNav" aria-labelledby="mainNavLabel">
+    <div class="offcanvas-header">
+        <div>
+            <div class="navbar-mobile-account-label mb-1">Navigation</div>
+            <div class="navbar-brand-text" id="mainNavLabel">Luxe<span>Shop</span></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation"></button>
+    </div>
+
+    <div class="offcanvas-body navbar-mobile-panel">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('shop') }}" class="nav-link {{ request()->routeIs('shop*') ? 'active' : '' }}">Shop</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
+                <ul class="dropdown-menu border-0 shadow-luxury rounded-xl py-2">
+                    @foreach($navCategories as $cat)
+                        <li><a href="{{ route('shop.category', $cat->slug) }}" class="dropdown-item py-2">{{ $cat->name }}</a></li>
+                    @endforeach
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+            </li>
+        </ul>
+
+        <div class="navbar-mobile-search mt-3">
+            <form action="{{ route('shop') }}" method="GET" class="navbar-search-form">
+                <div class="input-group navbar-search-group">
+                    <input type="text"
+                           name="search"
+                           class="form-control navbar-search-input rounded-start-pill border-end-0"
+                           placeholder="Search products..."
+                           value="{{ request('search') }}">
+                    <button type="submit"
+                            class="btn btn-accent navbar-search-btn rounded-end-pill px-3"
+                            style="border-radius: 0 50px 50px 0 !important;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="navbar-mobile-account mt-3">
+            @guest
+                <div class="navbar-mobile-account-card">
+                    <div class="navbar-mobile-account-label">My Account</div>
+                    <p class="text-muted mb-3" style="font-size:.88rem;">Sign in to track orders, save items, and checkout faster.</p>
+                    <div class="navbar-mobile-auth-buttons">
+                        <a href="{{ route('login') }}" class="btn btn-accent" data-nav-dismiss>Sign In</a>
+                        <a href="{{ route('register') }}" class="btn btn-outline-accent" data-nav-dismiss>Register</a>
+                    </div>
+                </div>
+            @else
+                <div class="navbar-mobile-account-card">
+                    <div class="navbar-mobile-account-label">Signed In</div>
+                    <div class="fw-semibold mb-1">Hello, {{ auth()->user()->name }}</div>
+                    <p class="text-muted mb-3" style="font-size:.88rem;">Use the shortcuts below to get where you need quickly.</p>
+                    <div class="navbar-mobile-account-actions">
+                        @if(!auth()->user()->isAdmin())
+                            <a href="{{ route('profile.show') }}" class="btn btn-outline-secondary rounded-pill" data-nav-dismiss>Account</a>
+                            <a href="{{ route('wishlist.index') }}" class="btn btn-outline-secondary rounded-pill" data-nav-dismiss>Wishlist</a>
+                        @else
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-accent rounded-pill" data-nav-dismiss>Admin</a>
+                            <a href="{{ route('profile.show') }}" class="btn btn-outline-secondary rounded-pill" data-nav-dismiss>Profile</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-secondary rounded-pill">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            @endguest
+        </div>
+    </div>
+</div>
 
 {{-- Flash Messages --}}
 @if(session('success'))
@@ -529,19 +879,13 @@
     </div>
 </footer>
 
+<button type="button" class="back-to-top" data-back-to-top aria-label="Back to top">
+    <i class="bi bi-arrow-up"></i>
+</button>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => entry.target.classList.add('visible'), i * 80);
-            }
-        });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
+<script src="{{ asset('js/frontend.js') }}" defer></script>
 @stack('scripts')
 </body>
 </html>

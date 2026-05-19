@@ -35,7 +35,7 @@
                     @foreach($order->items->take(3) as $item)
                     <div class="rounded-xl overflow-hidden" style="width:52px;height:52px;background:var(--bg-light);flex-shrink:0;">
                         @if($item->product_image)
-                        <img src="{{ asset('storage/'.$item->product_image) }}" class="w-100 h-100" style="object-fit:cover;">
+                        <img src="{{ \App\Support\PublicMedia::url($item->product_image, 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop') }}" class="w-100 h-100" style="object-fit:cover;">
                         @else
                         <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary">
                             <i class="bi bi-box text-white"></i>

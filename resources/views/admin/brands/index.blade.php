@@ -30,6 +30,10 @@
             </tbody>
         </table>
     </div>
-    <div class="p-4 border-top">{{ $brands->links() }}</div>
+    @if($brands->hasPages())
+    <div class="p-4 border-top d-flex justify-content-end">
+        {{ $brands->onEachSide(1)->links('vendor.pagination.admin') }}
+    </div>
+    @endif
 </div>
 @endsection

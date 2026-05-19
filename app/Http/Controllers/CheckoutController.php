@@ -5,25 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use KhqrGateway\BakongKHQR;
+use KhqrGateway\Models\IndividualInfo;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
-        $cartItems = Cart::where('user_id', auth()->id())->with('product')->get();
+        $cartItems = Cart::where('user_id', auth()->id())
+            ->with('product')
+            ->get();
 
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')
+                ->with('error', 'Your cart is empty.');
         }
 
-        $subtotal = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        $subtotal = $cartItems->sum(fn($i) => $i->price * $i->quantity);
         $shipping = $subtotal >= 100 ? 0 : 10;
         $tax      = round($subtotal * 0.08, 2);
         $total    = $subtotal + $shipping + $tax;
 
-        return view('frontend.checkout', compact('cartItems', 'subtotal', 'shipping', 'tax', 'total'));
+        return view('frontend.checkout',
+            compact('cartItems', 'subtotal', 'shipping', 'tax', 'total'));
     }
 
     public function store(Request $request)
@@ -37,20 +44,24 @@ class CheckoutController extends Controller
             'shipping_state'   => 'nullable|string|max:100',
             'shipping_zip'     => 'required|string|max:20',
             'shipping_country' => 'required|string|max:100',
-            'payment_method'   => 'required|in:cod,card,paypal',
+            'payment_method'   => 'required|in:cod,card,khqr',
         ]);
 
-        $cartItems = Cart::where('user_id', auth()->id())->with('product')->get();
+        $cartItems = Cart::where('user_id', auth()->id())
+            ->with('product')
+            ->get();
 
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')
+                ->with('error', 'Your cart is empty.');
         }
 
-        $subtotal = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        $subtotal = $cartItems->sum(fn($i) => $i->price * $i->quantity);
         $shipping = $subtotal >= 100 ? 0 : 10;
         $tax      = round($subtotal * 0.08, 2);
         $total    = $subtotal + $shipping + $tax;
 
+        // ── Create Order ──────────────────────────────────────────
         $order = Order::create([
             'order_number'     => 'ORD-' . strtoupper(Str::random(8)),
             'user_id'          => auth()->id(),
@@ -59,6 +70,8 @@ class CheckoutController extends Controller
             'tax'              => $tax,
             'total'            => $total,
             'payment_method'   => $request->payment_method,
+            'payment_status'   => 'pending',
+            'status'           => 'pending',
             'shipping_name'    => $request->shipping_name,
             'shipping_email'   => $request->shipping_email,
             'shipping_phone'   => $request->shipping_phone,
@@ -70,6 +83,7 @@ class CheckoutController extends Controller
             'notes'            => $request->notes,
         ]);
 
+        // ── Order Items ───────────────────────────────────────────
         foreach ($cartItems as $item) {
             OrderItem::create([
                 'order_id'      => $order->id,
@@ -80,14 +94,27 @@ class CheckoutController extends Controller
                 'price'         => $item->price,
                 'total'         => $item->price * $item->quantity,
             ]);
-
-            // Decrease stock
             $item->product->decrement('stock_quantity', $item->quantity);
         }
 
-        // Clear cart
+        // ── Clear Cart ────────────────────────────────────────────
         Cart::where('user_id', auth()->id())->delete();
 
-        return redirect()->route('orders.success', $order)->with('success', 'Order placed successfully!');
+        // ── Send Telegram Notification ────────────────────────────
+        try {
+            $order->load('items');
+            (new TelegramService())->sendOrderNotification($order);
+        } catch (\Exception $e) {
+            \Log::error('Telegram failed: ' . $e->getMessage());
+        }
+
+        // ── KHQR → redirect to QR payment page ───────────────────
+        if ($request->payment_method === 'khqr') {
+            return redirect()->route('payment.khqr', $order);
+        }
+
+        return redirect()
+            ->route('orders.success', $order)
+            ->with('success', 'Order placed successfully!');
     }
 }

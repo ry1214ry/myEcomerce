@@ -20,7 +20,7 @@
                                 <div class="d-flex align-items-center gap-2">
                                     @if($item->product_image)
                                     <div class="rounded overflow-hidden" style="width:40px;height:40px;flex-shrink:0;">
-                                        <img src="{{ asset('storage/'.$item->product_image) }}" class="w-100 h-100" style="object-fit:cover;">
+                                        <img src="{{ \App\Support\PublicMedia::url($item->product_image, 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600&h=600&fit=crop') }}" class="w-100 h-100" style="object-fit:cover;">
                                     </div>
                                     @endif
                                     <span class="fw-500" style="font-size:.875rem;">{{ $item->product_name }}</span>
